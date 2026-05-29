@@ -108,6 +108,23 @@
         </div>
     </div>
 
+    {{-- Sheet Color --}}
+    <div class="rounded-lg bg-white shadow p-6 space-y-4"
+         x-data="{ color: '{{ old('background_color', $preset->background_color) }}' }">
+        <h2 class="text-lg font-semibold text-gray-900">Sheet Background Color</h2>
+        <p class="text-sm text-gray-500">Color of the printed page behind all stickers. Leave blank to keep the random pastel palette.</p>
+        <div class="flex items-center gap-4">
+            <input type="color" :value="color || '#ffffff'" x-on:input="color = $event.target.value"
+                   class="h-10 w-16 rounded border border-gray-300 cursor-pointer">
+            <input type="text" name="background_color" x-model="color"
+                   pattern="^#[0-9a-fA-F]{6}$" maxlength="7" placeholder="#ffffff (blank = random)"
+                   class="block w-48 rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm font-mono">
+            <button type="button" x-on:click="color = ''" class="text-sm text-gray-600 hover:text-gray-900">Clear</button>
+            <div class="h-10 w-32 rounded border border-gray-300" :style="color ? 'background-color:' + color : 'background-image: repeating-linear-gradient(45deg, #f3f4f6, #f3f4f6 8px, #fff 8px, #fff 16px)'"></div>
+        </div>
+        <x-input-error :messages="$errors->get('background_color')" class="mt-1" />
+    </div>
+
     {{-- Images --}}
     <div class="rounded-lg bg-white shadow p-6 space-y-4" x-data="{ logo: '{{ old('logo_url', $preset->logo_url) }}', bg: '{{ old('background_url', $preset->background_url) }}' }">
         <h2 class="text-lg font-semibold text-gray-900">Images</h2>
@@ -122,7 +139,7 @@
                 <x-input-error :messages="$errors->get('logo_url')" class="mt-1" />
                 <div class="mt-2 rounded border border-dashed border-gray-300 p-2 h-32 flex items-center justify-center bg-gray-50">
                     <template x-if="logo">
-                        <img :src="logo" alt="Logo preview" class="max-h-28 max-w-full object-contain" @error="$el.style.display='none'">
+                        <img :src="logo" alt="Logo preview" class="max-h-28 max-w-full object-contain" x-on:error="$el.style.display='none'">
                     </template>
                     <template x-if="!logo">
                         <span class="text-xs text-gray-400">No logo</span>
@@ -138,7 +155,7 @@
                 <x-input-error :messages="$errors->get('background_url')" class="mt-1" />
                 <div class="mt-2 rounded border border-dashed border-gray-300 p-2 h-32 flex items-center justify-center bg-gray-50">
                     <template x-if="bg">
-                        <img :src="bg" alt="Background preview" class="max-h-28 max-w-full object-contain" @error="$el.style.display='none'">
+                        <img :src="bg" alt="Background preview" class="max-h-28 max-w-full object-contain" x-on:error="$el.style.display='none'">
                     </template>
                     <template x-if="!bg">
                         <span class="text-xs text-gray-400">No background</span>

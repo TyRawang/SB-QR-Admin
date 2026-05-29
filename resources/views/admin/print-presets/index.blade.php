@@ -25,6 +25,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Grid</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Logo</th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Background</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Sheet Color</th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
                     </tr>
                 </thead>
@@ -43,6 +44,16 @@
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $preset->cols }} × {{ $preset->rows }} ({{ $preset->cols * $preset->rows }})</td>
                         <td class="px-6 py-4 text-sm text-gray-500">{{ $preset->logo_url ? 'Yes' : '—' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-500">{{ $preset->background_url ? 'Yes' : '—' }}</td>
+                        <td class="px-6 py-4 text-sm">
+                            @if($preset->background_color)
+                                <span class="inline-flex items-center gap-2">
+                                    <span class="inline-block h-5 w-5 rounded border border-gray-300" style="background-color: {{ $preset->background_color }}"></span>
+                                    <span class="font-mono text-xs text-gray-600">{{ $preset->background_color }}</span>
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400">Random</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-4 text-right text-sm space-x-2">
                             @if(!$preset->is_default)
                                 <form method="POST" action="{{ route('admin.print-presets.set-default', $preset) }}" class="inline">
@@ -61,7 +72,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-500">
+                        <td colspan="7" class="px-6 py-8 text-center text-sm text-gray-500">
                             No presets yet. <a href="{{ route('admin.print-presets.create') }}" class="text-blue-600 hover:text-blue-900">Create one</a>.
                         </td>
                     </tr>

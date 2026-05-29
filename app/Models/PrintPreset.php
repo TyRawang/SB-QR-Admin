@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
     'margin_top', 'margin_right', 'margin_bottom', 'margin_left',
     'gap_x', 'gap_y',
     'show_text', 'text_size',
-    'logo_url', 'background_url',
+    'logo_url', 'background_url', 'background_color',
 ])]
 class PrintPreset extends Model
 {
@@ -73,6 +73,7 @@ class PrintPreset extends Model
             ],
             'logo_url' => $this->logo_url,
             'background_url' => $this->background_url,
+            'background_color' => $this->background_color,
         ];
     }
 }

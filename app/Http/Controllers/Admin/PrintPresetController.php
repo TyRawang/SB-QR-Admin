@@ -89,6 +89,7 @@ class PrintPresetController extends Controller
             'text_size' => ['required', 'integer', 'min:4', 'max:48'],
             'logo_url' => ['nullable', 'url', 'max:2048'],
             'background_url' => ['nullable', 'url', 'max:2048'],
+            'background_color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ]);
     }
 }
