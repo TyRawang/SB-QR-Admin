@@ -37,7 +37,7 @@ class SupabaseStorageService extends BaseSupabaseService
 
         $data = $this->handleResponse($response, "sign {$bucket}/{$path}");
 
-        return $this->url($data['signedURL']);
+        return $this->url('/storage/v1' . $data['signedURL']);
     }
 
     public function deleteFile(string $bucket, array $paths): array
