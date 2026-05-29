@@ -50,7 +50,14 @@ function normalizeLayout(input: any) {
   const out = { ...DEFAULT_LAYOUT };
   if (!input || typeof input !== "object") return out;
 
-  if (typeof input.page_size === "string" && PAGE_SIZES[input.page_size]) {
+  if (input.page_size === "Custom") {
+    const w = Number(input.custom_width_mm);
+    const h = Number(input.custom_height_mm);
+    if (w > 0 && h > 0) {
+      out.pageWidth = w * MM_TO_PT;
+      out.pageHeight = h * MM_TO_PT;
+    }
+  } else if (typeof input.page_size === "string" && PAGE_SIZES[input.page_size]) {
     out.pageWidth = PAGE_SIZES[input.page_size].w;
     out.pageHeight = PAGE_SIZES[input.page_size].h;
   }

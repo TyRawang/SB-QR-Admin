@@ -28,13 +28,13 @@
     </div>
 
     {{-- Layout --}}
-    <div class="rounded-lg bg-white shadow p-6 space-y-4">
+    <div class="rounded-lg bg-white shadow p-6 space-y-4" x-data="{ pageSize: '{{ old('page_size', $preset->page_size ?? 'A4') }}' }">
         <h2 class="text-lg font-semibold text-gray-900">Layout</h2>
 
         <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div>
                 <label for="page_size" class="block text-sm font-medium text-gray-700">Page Size</label>
-                <select name="page_size" id="page_size"
+                <select name="page_size" id="page_size" x-model="pageSize"
                         class="mt-1 block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm">
                     @foreach(\App\Models\PrintPreset::PAGE_SIZES as $size)
                         <option value="{{ $size }}" {{ old('page_size', $preset->page_size) === $size ? 'selected' : '' }}>{{ $size }}</option>
@@ -59,6 +59,29 @@
                 <input type="number" name="text_size" id="text_size" min="4" max="48" value="{{ old('text_size', $preset->text_size ?? 8) }}" required
                        class="mt-1 block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm">
                 <x-input-error :messages="$errors->get('text_size')" class="mt-1" />
+            </div>
+        </div>
+
+        <div x-show="pageSize === 'Custom'" x-cloak class="border-t border-gray-100 pt-4">
+            <h3 class="text-sm font-medium text-gray-900 mb-2">Custom Page Dimensions (mm)</h3>
+            <p class="text-xs text-gray-500 mb-3">Common thermal label sizes: 76×76 mm (3×3 in), 76×51 mm (3×2 in), 76×25 mm (3×1 in), 102×76 mm (4×3 in), 76×127 mm (3×5 in). For roll-fed thermal printers, use 1 column × 1 row with 0 margins.</p>
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div>
+                    <label for="custom_width_mm" class="block text-xs font-medium text-gray-600">Width</label>
+                    <input type="number" step="0.1" min="10" max="1000" name="custom_width_mm" id="custom_width_mm"
+                           value="{{ old('custom_width_mm', $preset->custom_width_mm) }}"
+                           x-bind:required="pageSize === 'Custom'"
+                           class="mt-1 block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm">
+                    <x-input-error :messages="$errors->get('custom_width_mm')" class="mt-1" />
+                </div>
+                <div>
+                    <label for="custom_height_mm" class="block text-xs font-medium text-gray-600">Height</label>
+                    <input type="number" step="0.1" min="10" max="1000" name="custom_height_mm" id="custom_height_mm"
+                           value="{{ old('custom_height_mm', $preset->custom_height_mm) }}"
+                           x-bind:required="pageSize === 'Custom'"
+                           class="mt-1 block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm">
+                    <x-input-error :messages="$errors->get('custom_height_mm')" class="mt-1" />
+                </div>
             </div>
         </div>
 

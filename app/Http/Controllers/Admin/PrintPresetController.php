@@ -79,6 +79,8 @@ class PrintPresetController extends Controller
             'cols' => ['required', 'integer', 'min:1', 'max:20'],
             'rows' => ['required', 'integer', 'min:1', 'max:20'],
             'page_size' => ['required', Rule::in(PrintPreset::PAGE_SIZES)],
+            'custom_width_mm' => ['nullable', 'required_if:page_size,Custom', 'numeric', 'min:10', 'max:1000'],
+            'custom_height_mm' => ['nullable', 'required_if:page_size,Custom', 'numeric', 'min:10', 'max:1000'],
             'margin_top' => ['required', 'numeric', 'min:0', 'max:100'],
             'margin_right' => ['required', 'numeric', 'min:0', 'max:100'],
             'margin_bottom' => ['required', 'numeric', 'min:0', 'max:100'],

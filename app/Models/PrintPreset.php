@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
     'name', 'is_default',
-    'cols', 'rows', 'page_size',
+    'cols', 'rows', 'page_size', 'custom_width_mm', 'custom_height_mm',
     'margin_top', 'margin_right', 'margin_bottom', 'margin_left',
     'gap_x', 'gap_y',
     'show_text', 'text_size',
@@ -22,6 +22,8 @@ class PrintPreset extends Model
             'is_default' => 'boolean',
             'cols' => 'integer',
             'rows' => 'integer',
+            'custom_width_mm' => 'float',
+            'custom_height_mm' => 'float',
             'margin_top' => 'float',
             'margin_right' => 'float',
             'margin_bottom' => 'float',
@@ -33,7 +35,7 @@ class PrintPreset extends Model
         ];
     }
 
-    public const PAGE_SIZES = ['A4', 'A5', 'Letter', 'Legal'];
+    public const PAGE_SIZES = ['A4', 'A5', 'Letter', 'Legal', 'Custom'];
 
     public function scopeDefault(Builder $query): Builder
     {
@@ -53,24 +55,31 @@ class PrintPreset extends Model
 
     public function toEdgeFunctionPayload(): array
     {
-        return [
-            'layout' => [
-                'cols' => $this->cols,
-                'rows' => $this->rows,
-                'page_size' => $this->page_size,
-                'margins' => [
-                    'top' => $this->margin_top,
-                    'right' => $this->margin_right,
-                    'bottom' => $this->margin_bottom,
-                    'left' => $this->margin_left,
-                ],
-                'gaps' => [
-                    'x' => $this->gap_x,
-                    'y' => $this->gap_y,
-                ],
-                'show_text' => $this->show_text,
-                'text_size' => $this->text_size,
+        $layout = [
+            'cols' => $this->cols,
+            'rows' => $this->rows,
+            'page_size' => $this->page_size,
+            'margins' => [
+                'top' => $this->margin_top,
+                'right' => $this->margin_right,
+                'bottom' => $this->margin_bottom,
+                'left' => $this->margin_left,
             ],
+            'gaps' => [
+                'x' => $this->gap_x,
+                'y' => $this->gap_y,
+            ],
+            'show_text' => $this->show_text,
+            'text_size' => $this->text_size,
+        ];
+
+        if ($this->page_size === 'Custom') {
+            $layout['custom_width_mm'] = $this->custom_width_mm;
+            $layout['custom_height_mm'] = $this->custom_height_mm;
+        }
+
+        return [
+            'layout' => $layout,
             'logo_url' => $this->logo_url,
             'background_url' => $this->background_url,
             'background_color' => $this->background_color,
