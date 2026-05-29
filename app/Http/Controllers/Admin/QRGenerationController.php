@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PrintPreset;
 use App\Services\SupabaseService;
 use App\Services\SupabaseStorageService;
 use Illuminate\Http\Request;
@@ -30,7 +31,10 @@ class QRGenerationController extends Controller
             Log::warning('QR Generation: failed to list exports', ['error' => $e->getMessage()]);
         }
 
-        return view('admin.qr.index', compact('unclaimedBoxes', 'exports'));
+        $presets = PrintPreset::orderByDesc('is_default')->orderBy('name')->get();
+        $defaultPresetId = PrintPreset::defaultPreset()?->id;
+
+        return view('admin.qr.index', compact('unclaimedBoxes', 'exports', 'presets', 'defaultPresetId'));
     }
 
     public function generate(Request $request)
@@ -38,18 +42,27 @@ class QRGenerationController extends Controller
         $request->validate([
             'count' => 'required|integer|min:1|max:20',
             'pdf_count' => 'required|integer|min:1|max:10',
+            'preset_id' => 'nullable|integer|exists:print_presets,id',
         ]);
+
+        $preset = $request->preset_id
+            ? PrintPreset::find($request->preset_id)
+            : PrintPreset::defaultPreset();
+
+        $payload = array_merge(
+            ['count' => (int) $request->count],
+            $preset?->toEdgeFunctionPayload() ?? [],
+        );
 
         $results = [];
 
         for ($i = 0; $i < $request->pdf_count; $i++) {
-            $result = $this->supabase->callEdgeFunction('sticker_sheet_pdf', [
-                'count' => (int) $request->count,
-            ]);
-            $results[] = $result;
+            $results[] = $this->supabase->callEdgeFunction('sticker_sheet_pdf', $payload);
         }
 
-        return back()->with('success', "Generated {$request->pdf_count} PDF(s) with {$request->count} QR codes each.")
+        $presetLabel = $preset ? " using \"{$preset->name}\"" : '';
+
+        return back()->with('success', "Generated {$request->pdf_count} PDF(s) with {$request->count} QR codes each{$presetLabel}.")
                      ->with('pdf_results', $results);
     }
 }

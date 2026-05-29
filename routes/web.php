@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BoxController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\PrintPresetController;
 use App\Http\Controllers\Admin\QRGenerationController;
 use App\Http\Controllers\Admin\StorageController;
 use App\Http\Controllers\Admin\SystemController;
@@ -37,6 +38,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // QR Generation
     Route::get('/qr', [QRGenerationController::class, 'index'])->name('qr.index');
     Route::post('/qr/generate', [QRGenerationController::class, 'generate'])->name('qr.generate');
+
+    // Print Presets
+    Route::resource('print-presets', PrintPresetController::class)->except(['show']);
+    Route::post('/print-presets/{print_preset}/set-default', [PrintPresetController::class, 'setDefault'])->name('print-presets.set-default');
 
     // Locations
     Route::get('/locations', [LocationController::class, 'index'])->name('locations.index');

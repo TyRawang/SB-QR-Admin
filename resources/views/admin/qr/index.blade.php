@@ -12,7 +12,27 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Generate Sticker Sheets</h2>
             <form method="POST" action="{{ route('admin.qr.generate') }}" class="space-y-4">
                 @csrf
-                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-lg">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-3xl">
+                    <div>
+                        <label for="preset_id" class="block text-sm font-medium text-gray-700">Print Preset</label>
+                        @if(count($presets) > 0)
+                            <select name="preset_id" id="preset_id"
+                                    class="mt-1 block w-full rounded-md border-0 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm">
+                                @foreach($presets as $preset)
+                                    <option value="{{ $preset->id }}" {{ $preset->id === $defaultPresetId ? 'selected' : '' }}>
+                                        {{ $preset->name }}{{ $preset->is_default ? ' (default)' : '' }} — {{ $preset->cols }}×{{ $preset->rows }} {{ $preset->page_size }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500">
+                                <a href="{{ route('admin.print-presets.index') }}" class="text-blue-600 hover:text-blue-900">Manage presets →</a>
+                            </p>
+                        @else
+                            <p class="mt-2 text-xs text-gray-500">
+                                No presets configured. <a href="{{ route('admin.print-presets.create') }}" class="text-blue-600 hover:text-blue-900">Create one</a> for custom layouts; otherwise edge function defaults will be used.
+                            </p>
+                        @endif
+                    </div>
                     <div>
                         <label for="count" class="block text-sm font-medium text-gray-700">QR Codes per PDF</label>
                         <input type="number" name="count" id="count" min="1" max="20" value="10" required
